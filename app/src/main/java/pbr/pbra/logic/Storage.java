@@ -2,9 +2,13 @@ package pbr.pbra.logic;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import pbr.pbra.model.Customer;
 import pbr.pbra.model.Fulfillment;
@@ -15,6 +19,7 @@ public enum Storage {
 
   private static OrdersDbHelper dbHelper_;
   private static SQLiteDatabase db_;
+  private static SQLiteDatabase r_;
 
   Storage() {
   }
@@ -22,12 +27,55 @@ public enum Storage {
   public static void init(Context c) {
     dbHelper_ = new OrdersDbHelper(c);
     db_ = dbHelper_.getWritableDatabase();
+    r_ = dbHelper_.getReadableDatabase();
   }
 
   public static Storage instance()
   {
     return INSTANCE;
   }
+
+
+
+  public static List<Customer> search(String s) {
+    ArrayList<Customer> res = new ArrayList<>();
+
+    final String[] projection = {
+        "name",
+        "email",
+        "phone"
+    };
+    final String where = "email LIKE ? OR name LIKE ? OR phone LIKE ?";
+    String q = String.format("%%%s%%", s);
+    String[] whereArgs = new String[] { q, q, q };
+    Cursor c = r_.query(
+        "customers",  // The table to query
+        projection,                               // The columns to return
+        where,                                // The columns for the WHERE clause
+        whereArgs,                            // The values for the WHERE clause
+        null,                                     // don't group the rows
+        null,                                     // don't filter by row groups
+        null                                 // The sort order
+    );
+
+    final int nameIdx = c.getColumnIndexOrThrow("name");
+    final int emailIdx = c.getColumnIndexOrThrow("email");
+    final int phoneIdx = c.getColumnIndexOrThrow("phone");
+
+    if (c != null && c.getCount() != 0) {
+      c.moveToFirst();
+      while (!c.isLast()) {
+        Customer r = new Customer();
+        r.name = c.getString(nameIdx);
+        r.email = c.getString(emailIdx);
+        r.phone = c.getString(phoneIdx);
+        res.add(r);
+        c.moveToNext();
+      }
+    }
+    return res;
+  }
+
 
   public static void clean() {
     if (db_ == null) {

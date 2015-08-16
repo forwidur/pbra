@@ -3,10 +3,18 @@ package pbr.pbra;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+
+import java.util.List;
 
 import pbr.pbra.logic.Storage;
+import pbr.pbra.model.Customer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,6 +24,28 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     Storage.instance().init(this);
+
+    EditText search = (EditText) findViewById(R.id.search);
+    search.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+    search.addTextChangedListener(new TextWatcher() {
+      public void afterTextChanged(Editable s) { }
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        Log.d("SEARCH", s.toString());
+        if (s.length() > 2) {
+          issueSearch(s.toString());
+        }
+      }
+    });
+  }
+
+  private void issueSearch(String q) {
+    List<Customer> res = Storage.instance().search(q);
+
+    for (Customer c : res) {
+      Log.e("FOUND", c.email);
+    }
   }
 
   @Override
@@ -27,12 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
       startActivity(new Intent(this, ConfigActivity.class));
       return true;
