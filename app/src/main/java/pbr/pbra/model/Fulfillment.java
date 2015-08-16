@@ -6,4 +6,5 @@ public class Fulfillment {
   public boolean complete;
   public boolean returned;
   public String comment;
+  public int version;
 }

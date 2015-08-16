@@ -79,6 +79,7 @@ public enum Storage {
     v.put("complete", f.complete);
     v.put("returned", f.returned);
     v.put("comment", f.comment);
+    v.put("version", f.version);
     String[] sel = {orderId};
     db_.update("fulfillement", v, "order_id LIKE ?", sel);
   }
@@ -101,7 +102,7 @@ public enum Storage {
 
       db.execSQL("CREATE TABLE fulfillment " +
           "(order_id TEXT PRIMARY KEY, assignment TEXT, comment TEXT, " +
-          " complete INTEGER DEFAULT 0, returned INTEGER DEFAULT 0)");
+          " complete INTEGER, returned INTEGER, version INTEGER)");
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       db.execSQL("DROP TABLE IF EXISTS customers");
