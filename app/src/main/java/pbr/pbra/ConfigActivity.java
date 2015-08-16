@@ -3,8 +3,12 @@ package pbr.pbra;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import pbr.pbra.logic.CSVImporter;
+import pbr.pbra.logic.Storage;
 
 public class ConfigActivity extends AppCompatActivity {
   @Override
@@ -37,6 +41,13 @@ public class ConfigActivity extends AppCompatActivity {
   }
 
   public void onImportClicked(View view) {
-    showMessage("Import", "Import successful!");
+    String file = Environment.getExternalStorageDirectory() +"/sales.csv";
+
+    try {
+      showMessage("Import successful", String.format("Imported %d orders.",
+          new CSVImporter(Storage.instance()).Process(file)));
+    } catch (Exception e) {
+      showMessage("Import failed", e.getMessage());
+    }
   }
 }

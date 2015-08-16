@@ -10,7 +10,6 @@ import pbr.pbra.logic.Storage;
 
 
 public class MainActivity extends AppCompatActivity {
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

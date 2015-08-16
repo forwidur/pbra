@@ -5,4 +5,5 @@ public class Fulfillment {
   public String assignment;
   public boolean complete;
   public boolean returned;
+  public String comment;
 }
