@@ -1,5 +1,6 @@
 package pbr.pbra;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Intent;
@@ -47,10 +48,14 @@ public class MainActivity extends ListActivity
 
     // Binding.
     final LoaderManager.LoaderCallbacks<Cursor> lc = this;
+    final Activity act = this;
     search.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable s) { }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
       public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (s.toString().equals("config")) {
+          act.startActivity(new Intent(act, ConfigActivity.class));
+        }
         Log.d("SEARCH", s.toString());
         if (s.length() > 2) {
           Bundle b = new Bundle();
