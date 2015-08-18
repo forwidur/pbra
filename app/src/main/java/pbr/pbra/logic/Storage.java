@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import pbr.pbra.model.Customer;
 import pbr.pbra.model.Fulfillment;
@@ -35,12 +34,9 @@ public enum Storage {
     return INSTANCE;
   }
 
-
-
-  public static List<Customer> search(String s) {
-    ArrayList<Customer> res = new ArrayList<>();
-
+  public static Cursor search(String s) {
     final String[] projection = {
+        "rowid _id",
         "name",
         "email",
         "phone"
@@ -48,32 +44,35 @@ public enum Storage {
     final String where = "email LIKE ? OR name LIKE ? OR phone LIKE ?";
     String q = String.format("%%%s%%", s);
     String[] whereArgs = new String[] { q, q, q };
-    Cursor c = r_.query(
+    return r_.query(
         "customers",  // The table to query
-        projection,                               // The columns to return
-        where,                                // The columns for the WHERE clause
-        whereArgs,                            // The values for the WHERE clause
-        null,                                     // don't group the rows
-        null,                                     // don't filter by row groups
-        null                                 // The sort order
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
     );
-
-    final int nameIdx = c.getColumnIndexOrThrow("name");
-    final int emailIdx = c.getColumnIndexOrThrow("email");
-    final int phoneIdx = c.getColumnIndexOrThrow("phone");
-
-    if (c != null && c.getCount() != 0) {
-      c.moveToFirst();
-      while (!c.isLast()) {
-        Customer r = new Customer();
-        r.name = c.getString(nameIdx);
-        r.email = c.getString(emailIdx);
-        r.phone = c.getString(phoneIdx);
-        res.add(r);
-        c.moveToNext();
-      }
-    }
-    return res;
+  }
+  public static Cursor orders(String s) {
+    final String[] projection = {
+        "rowid _id",
+        "id",
+        "type",
+        "quantity"
+    };
+    final String where = "email LIKE ?";
+    String q = s;
+    String[] whereArgs = new String[] { s };
+    return r_.query(
+        "orders",  // The table to query
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
+    );
   }
 
 
