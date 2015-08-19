@@ -62,7 +62,6 @@ public enum Storage {
         "quantity"
     };
     final String where = "email LIKE ?";
-    String q = s;
     String[] whereArgs = new String[] { s };
     return r_.query(
         "orders",  // The table to query
@@ -127,8 +126,47 @@ public enum Storage {
     v.put("returned", f.returned);
     v.put("comment", f.comment);
     v.put("version", f.version);
-    String[] sel = {orderId};
-    db_.update("fulfillement", v, "order_id LIKE ?", sel);
+
+    db_.insertWithOnConflict("fulfillment", null, v, SQLiteDatabase.CONFLICT_REPLACE);
+  }
+
+  public Fulfillment getFulfillment(String id) {
+    if (db_ == null) {
+      Log.e("Storage", "DB op but helper not initialized.");
+      return null;
+    }
+
+    final String[] projection = {
+        "assignment",
+        "comment",
+        "complete",
+        "returned",
+        "version"
+    };
+    final String where = "order_id LIKE ?";
+    String[] whereArgs = new String[] { id };
+    Cursor c = r_.query(
+        "fulfillment",  // The table to query
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
+    );
+
+    if (c != null && c.getCount() != 0) {
+      c.moveToFirst();
+      Fulfillment res = new Fulfillment();
+      res.orderId = id;
+      res.assignment = c.getString(c.getColumnIndexOrThrow("assignment"));
+      res.comment = c.getString(c.getColumnIndexOrThrow("comment"));
+      res.complete = c.getInt(c.getColumnIndexOrThrow("complete"));
+      res.returned = c.getInt(c.getColumnIndexOrThrow("returned"));
+      res.version = c.getInt(c.getColumnIndexOrThrow("version"));
+      return res;
+    }
+    return null;
   }
 
   public static class OrdersDbHelper extends SQLiteOpenHelper {

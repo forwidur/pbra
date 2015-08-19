@@ -3,4 +3,7 @@
     <item type="id" name="name" />
     <item type="id" name="email" />
     <item type="id" name="phone" />
+    <item type="id" name="orderType" />
+    <item type="id" name="orderId" />
+    <item type="id" name="orderQuantity" />
 </resources>

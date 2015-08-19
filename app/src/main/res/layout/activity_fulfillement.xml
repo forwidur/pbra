@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Order Type"
+        android:id="@+id/orderType"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Quantity: "
+        android:id="@+id/quantityLabel"
+        android:layout_below="@+id/orderType"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0"
+        android:id="@+id/orderQuantity"
+        android:layout_below="@+id/orderType"
+        android:layout_toRightOf="@+id/quantityLabel"
+        android:layout_toEndOf="@+id/orderType" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="#1231"
+        android:id="@+id/orderId"
+        android:layout_alignBaseline="@+id/quantityLabel"
+        android:layout_alignBottom="@+id/quantityLabel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/quantityLabel"
+        android:background="@android:color/darker_gray"
+        android:id="@+id/view"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Assignment:"
+        android:id="@+id/fulAssignmentLabel"
+        android:layout_below="@+id/view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Comment: "
+        android:id="@+id/fulCommentLabel"
+        android:layout_below="@+id/fulAssignment"
+        android:layout_alignRight="@+id/orderQuantity"
+        android:layout_alignEnd="@+id/orderQuantity"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/fulAssignment"
+        android:layout_below="@+id/fulAssignmentLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/orderId"
+        android:layout_alignEnd="@+id/orderId"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/fulComment"
+        android:layout_below="@+id/fulCommentLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/orderId"
+        android:layout_alignEnd="@+id/orderId"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/quantityLabel"
+        android:layout_toEndOf="@+id/quantityLabel"
+        android:onClick="onSaveClicked"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/button2"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/orderId"
+        android:layout_toStartOf="@+id/orderId"
+        android:onClick="onCancelClicked"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Complete"
+        android:id="@+id/fulComplete"
+        android:checked="false"
+        android:layout_below="@+id/fulComment"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Returned"
+        android:id="@+id/fulReturned"
+        android:checked="false"
+        android:layout_below="@+id/fulComplete"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

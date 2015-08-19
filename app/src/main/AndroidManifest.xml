@@ -18,8 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OrdersActivity"></activity>
-        <activity android:name=".ConfigActivity"></activity>
+        <activity android:name=".OrdersActivity" />
+        <activity android:name=".FulfillmentActivity" />
+        <activity android:name=".ConfigActivity" />
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

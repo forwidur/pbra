@@ -2,6 +2,7 @@ package pbr.pbra;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -54,11 +55,12 @@ public class OrdersActivity extends ListActivity
   public void onListItemClick(ListView l, View v, int position, long id) {
     Cursor c = (Cursor) getListAdapter().getItem(position);
     Log.d("", c.getString(c.getColumnIndexOrThrow("id")));
-    /*
     Bundle b = new Bundle();
-    b.putString("name", c.getString(c.getColumnIndexOrThrow("name")));
-    b.putString("email", c.getString(c.getColumnIndexOrThrow("email")));
-    b.putString("phone", c.getString(c.getColumnIndexOrThrow("phone")));
-    startActivity(new Intent(this, OrdersActivity.class), b);*/
+    b.putString("id", c.getString(c.getColumnIndexOrThrow("id")));
+    b.putString("type", c.getString(c.getColumnIndexOrThrow("type")));
+    b.putInt("quantity", c.getInt(c.getColumnIndexOrThrow("quantity")));
+    Intent i = new Intent(this, FulfillmentActivity.class);
+    i.putExtra("order", b);
+    startActivity(i);
   }
 }
