@@ -41,9 +41,9 @@ public enum Storage {
         "email",
         "phone"
     };
-    final String where = "email LIKE ? OR name LIKE ? OR phone LIKE ?";
+    final String where = "email LIKE ? OR name LIKE ? OR name_search LIKE ? OR phone LIKE ?";
     String q = String.format("%%%s%%", s);
-    String[] whereArgs = new String[] { q, q, q };
+    String[] whereArgs = new String[] { q, q, q, q };
     return r_.query(
         "customers",  // The table to query
         projection,   // The columns to return
@@ -51,7 +51,7 @@ public enum Storage {
         whereArgs,    // The values for the WHERE clause
         null,         // don't group the rows
         null,         // don't filter by row groups
-        null          // The sort order
+        "email"       // The sort order
     );
   }
   public static Cursor orders(String s) {
@@ -92,6 +92,7 @@ public enum Storage {
 
     ContentValues v = new ContentValues();
     v.put("name", c.name);
+    v.put("name_search", c.name_search);
     v.put("email", c.email);
     v.put("phone", c.phone);
     v.put("address", c.address);
@@ -174,7 +175,7 @@ public enum Storage {
   }
 
   public static class OrdersDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "PBROrders.db";
 
     public OrdersDbHelper(Context context) {
@@ -182,8 +183,8 @@ public enum Storage {
     }
     public void onCreate(SQLiteDatabase db) {
       db.execSQL("CREATE TABLE customers " +
-          "(email TEXT PRIMARY KEY, name TEXT, phone TEXT, address TEXT)");
-      db.execSQL("CREATE INDEX customer_composite_idx ON customers(email, name, phone);");
+          "(email TEXT PRIMARY KEY, name TEXT, name_search TEXT, phone TEXT, address TEXT)");
+      db.execSQL("CREATE INDEX customer_composite_idx ON customers(email, name, name_search, phone);");
 
       db.execSQL("CREATE TABLE orders " +
           "(email TEXT, id TEXT PRIMARY KEY, type TEXT, quantity INTEGER)");

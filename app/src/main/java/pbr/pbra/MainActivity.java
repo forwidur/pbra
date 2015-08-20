@@ -56,7 +56,6 @@ public class MainActivity extends ListActivity
         if (s.toString().equals("config")) {
           act.startActivity(new Intent(act, ConfigActivity.class));
         }
-        Log.d("SEARCH", s.toString());
         if (s.length() > 2) {
           Bundle b = new Bundle();
           b.putBoolean("empty", false);
@@ -75,7 +74,12 @@ public class MainActivity extends ListActivity
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     CustomerLoader res = new CustomerLoader(this);
     if (args.getBoolean("empty") == false) {
-      res.search(args.getString("q"));
+      String q = args.getString("q");
+      if (q.equals("showworld")) {
+        res.search("");
+      } else {
+        res.search(q);
+      }
     } else {
       // TODO(mag): figure out a cleaner way.
       res.search("somebogusthing");

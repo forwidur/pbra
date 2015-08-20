@@ -22,9 +22,10 @@ public class CSVImporter {
   private static Customer makeCustomer(CSVRecord r) {
     Customer res = new Customer();
 
-    res.email = r.get("Email");
+    res.email = r.get("Email").toLowerCase();
     res.name = r.get("Billing Name");
-    res.phone = r.get("Billing Phone");
+    res.name_search = r.get("Billing Name").toLowerCase();
+    res.phone = r.get("Billing Phone").replaceAll("[\\+\\-\\(\\)\\s]", "");
     res.address = r.get("Billing Street");
 
     return res;
