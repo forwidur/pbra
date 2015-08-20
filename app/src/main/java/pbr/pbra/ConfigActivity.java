@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import pbr.pbra.logic.CSVExporter;
 import pbr.pbra.logic.CSVImporter;
 import pbr.pbra.logic.Storage;
 
@@ -48,6 +49,17 @@ public class ConfigActivity extends AppCompatActivity {
           new CSVImporter(Storage.instance()).Process(file)));
     } catch (Exception e) {
       showMessage("Import failed", e.getMessage());
+    }
+  }
+
+  public void onExportClicked(View view) {
+    String file = Environment.getExternalStorageDirectory() +"/fulfillments.csv";
+
+    try {
+      showMessage("Export successful", String.format("Exported %d records.",
+          CSVExporter.exportFulfillments(file, Storage.instance().allFulfillments())));
+    } catch (Exception e) {
+      showMessage("Export failed", e.getMessage());
     }
   }
 }

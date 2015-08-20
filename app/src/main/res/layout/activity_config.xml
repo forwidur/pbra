@@ -7,11 +7,30 @@
         android:layout_height="wrap_content"
         android:text="Run Import"
         android:id="@+id/button3"
+        android:onClick="onImportClicked"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginLeft="43dp"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="59dp"
-        android:onClick="onImportClicked"/>
+        android:layout_marginTop="49dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/exportPath"
+        android:layout_below="@+id/button3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="42dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Run Export"
+        android:id="@+id/button4"
+        android:layout_below="@+id/exportPath"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onExportClicked"/>
 </RelativeLayout>

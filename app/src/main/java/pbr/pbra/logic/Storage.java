@@ -169,6 +169,10 @@ public enum Storage {
     return null;
   }
 
+  public Cursor allFulfillments() {
+    return r_.query("fulfillment_export", null, null, null, null, null, null);
+  }
+
   public static class OrdersDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "PBROrders.db";
@@ -188,11 +192,16 @@ public enum Storage {
       db.execSQL("CREATE TABLE fulfillment " +
           "(order_id TEXT PRIMARY KEY, assignment TEXT, comment TEXT, " +
           " complete INTEGER, returned INTEGER, version INTEGER)");
+
+      db.execSQL("CREATE VIEW fulfillment_export AS SELECT fulfillment.*, orders.* " +
+          "FROM fulfillment, orders " +
+          "WHERE fulfillment.order_id = orders.id");
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       db.execSQL("DROP TABLE IF EXISTS customers");
       db.execSQL("DROP TABLE IF EXISTS orders");
       db.execSQL("DROP TABLE IF EXISTS fulfillment");
+      db.execSQL("DROP VIEW IF EXISTS fulfillment_export");
       onCreate(db);
     }
   }
