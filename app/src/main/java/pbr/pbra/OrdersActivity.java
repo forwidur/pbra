@@ -54,7 +54,6 @@ public class OrdersActivity extends ListActivity
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
     Cursor c = (Cursor) getListAdapter().getItem(position);
-    Log.d("", c.getString(c.getColumnIndexOrThrow("id")));
     Bundle b = new Bundle();
     b.putString("id", c.getString(c.getColumnIndexOrThrow("id")));
     b.putString("type", c.getString(c.getColumnIndexOrThrow("type")));
