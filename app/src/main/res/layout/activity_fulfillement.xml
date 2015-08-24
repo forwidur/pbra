@@ -82,8 +82,8 @@
         android:layout_below="@+id/fulAssignmentLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/orderId"
-        android:layout_alignEnd="@+id/orderId"/>
+        android:layout_toLeftOf="@+id/scan"
+        android:layout_toStartOf="@+id/scan"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -136,5 +136,15 @@
         android:layout_below="@+id/fulComplete"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan"
+        android:id="@+id/scan"
+        android:layout_alignBottom="@+id/fulAssignment"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="onScanClicked"/>
 
 </RelativeLayout>

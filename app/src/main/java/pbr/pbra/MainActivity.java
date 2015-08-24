@@ -19,6 +19,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import pbr.pbra.logic.CustomerLoader;
 import pbr.pbra.logic.Storage;
 
@@ -48,27 +51,32 @@ public class MainActivity extends ListActivity
 
     // Binding.
     final LoaderManager.LoaderCallbacks<Cursor> lc = this;
-    final Activity act = this;
+    final MainActivity act = this;
     search.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable s) { }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
       public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.toString().equals("config")) {
-          act.startActivity(new Intent(act, ConfigActivity.class));
-        }
-        if (s.length() > 2) {
-          Bundle b = new Bundle();
-          b.putBoolean("empty", false);
-          b.putString("q", s.toString());
-          getLoaderManager().restartLoader(0, b, lc);
-        }
-        if (s.length() == 0) {
-          Bundle b = new Bundle();
-          b.putBoolean("empty", true);
-          getLoaderManager().restartLoader(0, b, lc);
-        }
+        act.issueSearch(s.toString());
       }
     });
+  }
+
+  private void issueSearch(String s) {
+    if (s.toString().equals("config")) {
+      this.startActivity(new Intent(this, ConfigActivity.class));
+    }
+    if (s.length() > 2) {
+      Bundle b = new Bundle();
+      b.putBoolean("empty", false);
+      b.putString("q", s.toString());
+      getLoaderManager().restartLoader(0, b, this);
+    }
+    if (s.length() == 0) {
+      Bundle b = new Bundle();
+      b.putBoolean("empty", true);
+      getLoaderManager().restartLoader(0, b, this);
+    }
+
   }
 
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -123,6 +131,24 @@ public class MainActivity extends ListActivity
       return true;
     }
 
+    if (id == R.id.action_scan) {
+      new IntentIntegrator(this).initiateScan();
+      return true;
+    }
+
     return super.onOptionsItemSelected(item);
+  }
+
+  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    IntentResult scan =
+        IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+    if (scan != null) {
+      String cont = scan.getContents();
+      ((EditText) findViewById(R.id.search)).setText(cont);
+      issueSearch(cont);
+    }
+  }
+
+  public void onScanClicked(View view) {
   }
 }

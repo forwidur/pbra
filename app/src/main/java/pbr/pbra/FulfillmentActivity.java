@@ -1,5 +1,6 @@
 package pbr.pbra;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import pbr.pbra.logic.Storage;
 import pbr.pbra.model.Fulfillment;
@@ -59,5 +63,18 @@ public class FulfillmentActivity extends AppCompatActivity {
 
   public void onCancelClicked(View view) {
     finish();
+  }
+
+  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    IntentResult scan =
+        IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+    if (scan != null) {
+      String cont = scan.getContents();
+      ((EditText) findViewById(R.id.fulAssignment)).setText(cont);
+    }
+  }
+
+  public void onScanClicked(View view) {
+    new IntentIntegrator(this).initiateScan();
   }
 }
