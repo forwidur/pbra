@@ -69,7 +69,9 @@ public class Server extends IntentService {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    t_.start();
+    if (!t_.isAlive()) {
+      t_.start();
+    }
     return START_STICKY;
   }
 
