@@ -24,9 +24,9 @@ public enum Storage {
   }
 
   public static void init(Context c) {
-    dbHelper_ = new OrdersDbHelper(c);
-    db_ = dbHelper_.getWritableDatabase();
-    r_ = dbHelper_.getReadableDatabase();
+    if (dbHelper_ == null) dbHelper_ = new OrdersDbHelper(c);
+    if (db_ == null)       db_ = dbHelper_.getWritableDatabase();
+    if (r_ == null)        r_ = dbHelper_.getReadableDatabase();
   }
 
   public static Storage instance()

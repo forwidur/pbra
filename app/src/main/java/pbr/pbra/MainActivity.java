@@ -24,6 +24,8 @@ import com.google.zxing.integration.android.IntentResult;
 
 import pbr.pbra.logic.CustomerLoader;
 import pbr.pbra.logic.Storage;
+import pbr.pbra.sync.Server;
+import pbr.pbra.sync.Syncer;
 
 
 public class MainActivity extends ListActivity
@@ -59,6 +61,9 @@ public class MainActivity extends ListActivity
         act.issueSearch(s.toString());
       }
     });
+
+    startService(new Intent(this, Server.class));
+    startService(new Intent(this, Syncer.class));
   }
 
   private void issueSearch(String s) {
@@ -113,11 +118,13 @@ public class MainActivity extends ListActivity
     Intent i = new Intent(this, OrdersActivity.class);
     i.putExtra("customer", b);
     startActivity(i);
+
+    startService(new Intent(this, Syncer.class));
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add("0 waiting for sync");
+//    menu.add("0 waiting for sync");
     getMenuInflater().inflate(R.menu.menu_main, menu);
     return true;
   }
@@ -147,8 +154,5 @@ public class MainActivity extends ListActivity
       ((EditText) findViewById(R.id.search)).setText(cont);
       issueSearch(cont);
     }
-  }
-
-  public void onScanClicked(View view) {
   }
 }
