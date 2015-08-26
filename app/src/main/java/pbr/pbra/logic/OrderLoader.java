@@ -16,6 +16,6 @@ public class OrderLoader extends CursorLoader {
 
   @Override
   public Cursor loadInBackground() {
-    return Storage.instance().orders(q_);
+    return Storage.instance(null).orders(q_);
   }
 }

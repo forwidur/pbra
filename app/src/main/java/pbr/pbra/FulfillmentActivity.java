@@ -31,7 +31,7 @@ public class FulfillmentActivity extends AppCompatActivity {
     id_ = o.getString("id");
     ((TextView)findViewById(R.id.orderId)).setText(id_);
 
-    f_ = Storage.instance().getFulfillment(id_);
+    f_ = Storage.instance(this).getFulfillment(id_);
     if (f_ != null) {
       ((EditText) findViewById(R.id.fulAssignment)).setText(f_.assignment);
       ((EditText) findViewById(R.id.fulComment)).setText(f_.comment);

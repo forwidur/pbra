@@ -46,7 +46,7 @@ public class ConfigActivity extends AppCompatActivity {
 
     try {
       showMessage("Import successful", String.format("Imported %d orders.",
-          new CSVImporter(Storage.instance()).Process(file)));
+          new CSVImporter(Storage.instance(this)).Process(file)));
     } catch (Exception e) {
       showMessage("Import failed", e.getMessage());
     }
@@ -57,7 +57,7 @@ public class ConfigActivity extends AppCompatActivity {
 
     try {
       showMessage("Export successful", String.format("Exported %d records.",
-          CSVExporter.exportFulfillments(file, Storage.instance().allFulfillments())));
+          CSVExporter.exportFulfillments(file, Storage.instance(this).allFulfillments())));
     } catch (Exception e) {
       showMessage("Export failed", e.getMessage());
     }

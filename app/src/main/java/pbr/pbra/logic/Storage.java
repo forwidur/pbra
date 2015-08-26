@@ -32,8 +32,10 @@ public enum Storage {
     if (r_ == null)        r_ = dbHelper_.getReadableDatabase();
   }
 
-  public static Storage instance()
-  {
+  public static Storage instance(Context c) {
+    if (r_ == null || dbHelper_ == null || db_ == null) {
+      init(c);
+    }
     return INSTANCE;
   }
 
@@ -175,7 +177,7 @@ public enum Storage {
 
   public boolean updateFulfillmentIfNewer(Fulfillment f) {
     Fulfillment old = getFulfillment(f.orderId);
-    if (f.version > old.version) {
+    if (old == null || f.version > old.version) {
       updateFulfillment(f.orderId, f);
       return true;
     }

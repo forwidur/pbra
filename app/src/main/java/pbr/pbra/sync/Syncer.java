@@ -36,7 +36,7 @@ public class Syncer extends IntentService {
             l_.await(60, TimeUnit.SECONDS);
 
             String a = d.getAddress();
-            Map<Integer, String> messages = Storage.instance().getQueue(a);
+            Map<Integer, String> messages = Storage.instance(Syncer.this).getQueue(a);
             if (!messages.isEmpty()) {
               BluetoothSocket s = connect(a);
               OutputStream out = s.getOutputStream();
@@ -50,7 +50,7 @@ public class Syncer extends IntentService {
 
                 Util.writeMessage(out, m);
                 if (Util.readMessage(in).equals("DONE")) {
-                  Storage.instance().deleteQueue(id);
+                  Storage.instance(Syncer.this).deleteQueue(id);
                 }
               }
 
@@ -92,7 +92,7 @@ public class Syncer extends IntentService {
   }
 
   private void addQueue(String address, String message) {
-    Storage.instance().insertQueue(address, message);
+    Storage.instance(this).insertQueue(address, message);
   }
 
   // This is horrible.

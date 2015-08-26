@@ -16,6 +16,6 @@ public class CustomerLoader extends CursorLoader {
 
   @Override
   public Cursor loadInBackground() {
-    return Storage.instance().search(q_);
+    return Storage.instance(null).search(q_);
   }
 }

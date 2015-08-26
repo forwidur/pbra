@@ -37,7 +37,7 @@ public class MainActivity extends ListActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    Storage.instance().init(this);
+    Storage.instance(this);
 
     // Top input.
     EditText search = (EditText) findViewById(R.id.search);
@@ -152,7 +152,6 @@ public class MainActivity extends ListActivity
     if (scan != null) {
       String cont = scan.getContents();
       ((EditText) findViewById(R.id.search)).setText(cont);
-//      issueSearch(cont);
     }
   }
 }

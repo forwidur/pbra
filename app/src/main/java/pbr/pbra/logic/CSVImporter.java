@@ -45,8 +45,7 @@ public class CSVImporter {
     Reader in = new FileReader(path);
     Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(in);
 
-    Storage s = Storage.instance();
-    s.clean();
+    s_.clean();
 
     int orders = 0;
     HashSet<String> seenCustomers = new HashSet<String>();
@@ -55,7 +54,7 @@ public class CSVImporter {
     for (CSVRecord r: records) {
       Customer c = makeCustomer(r);
       if (!seenCustomers.contains(c.email)) {
-        s.insertCustomer(c);
+        s_.insertCustomer(c);
         seenCustomers.add(c.email);
       } else {
       }
@@ -68,7 +67,7 @@ public class CSVImporter {
         orderInc++;
       }
       String orderId = String.format("%s-%d", order, orderInc);
-      s.insertOrder(c.email, makeOrder(orderId, r));
+      s_.insertOrder(c.email, makeOrder(orderId, r));
 
       orders++;
     }
