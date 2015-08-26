@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import pbr.pbra.model.Customer;
 import pbr.pbra.model.Fulfillment;
@@ -170,12 +173,67 @@ public enum Storage {
     return null;
   }
 
+  public boolean updateFulfillmentIfNewer(Fulfillment f) {
+    Fulfillment old = getFulfillment(f.orderId);
+    if (f.version > old.version) {
+      updateFulfillment(f.orderId, f);
+      return true;
+    }
+    return false;
+  }
+
   public Cursor allFulfillments() {
     return r_.query("fulfillment_export", null, null, null, null, null, null);
   }
 
+  public void insertQueue(String address, String message) {
+    if (db_ == null) {
+      Log.e("Storage", "DB op but helper not initialized.");
+      return;
+    }
+
+    ContentValues v = new ContentValues();
+    v.put("address", address);
+    v.put("message", message);
+
+    db_.insertOrThrow("queue", null, v);
+  }
+
+  public void deleteQueue(Integer id) {
+    db_.delete("queue", "rowid" +  "=" + id, null);
+  }
+
+  public Map<Integer, String> getQueue(String address) {
+    Map<Integer, String> res = new TreeMap<>();
+    final String[] projection = {
+        "rowid",
+        "message"
+    };
+    final String where = "address LIKE ?";
+    String[] whereArgs = new String[] { address };
+    Cursor c = r_.query(
+        "queue",      // The table to query
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
+    );
+
+    int idIdx = c.getColumnIndexOrThrow("rowid");
+    int messageIdx = c.getColumnIndexOrThrow("message");
+    if (c.moveToFirst()) {
+      while (c.isAfterLast() == false) {
+        res.put(c.getInt(idIdx), c.getString(messageIdx));
+        c.moveToNext();
+      }
+    }
+    return res;
+  }
+
   public static class OrdersDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "PBROrders.db";
 
     public OrdersDbHelper(Context context) {
@@ -197,12 +255,15 @@ public enum Storage {
       db.execSQL("CREATE VIEW fulfillment_export AS SELECT fulfillment.*, orders.* " +
           "FROM fulfillment, orders " +
           "WHERE fulfillment.order_id = orders.id");
+
+      db.execSQL("CREATE TABLE queue (address STRING, message STRING)");
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
       db.execSQL("DROP TABLE IF EXISTS customers");
       db.execSQL("DROP TABLE IF EXISTS orders");
       db.execSQL("DROP TABLE IF EXISTS fulfillment");
       db.execSQL("DROP VIEW IF EXISTS fulfillment_export");
+      db.execSQL("DROP TABLE IF EXISTS queue");
       onCreate(db);
     }
   }

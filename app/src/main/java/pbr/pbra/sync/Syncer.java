@@ -13,21 +13,67 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import pbr.pbra.logic.Storage;
 
 public class Syncer extends IntentService {
   final BluetoothAdapter adapter_ = BluetoothAdapter.getDefaultAdapter();
   final Set<BluetoothDevice> paired_ = adapter_.getBondedDevices();
+  CountDownLatch l_ = new CountDownLatch(1);
+
+  final private Thread t_ = new Thread(new Runnable() {
+    @Override
+    public void run() {
+      Log.d("Syncer", "Loop started");
+      while (true) {
+        try {
+          for (BluetoothDevice d: paired_) {
+            l_ = new CountDownLatch(1);
+            l_.await(60, TimeUnit.SECONDS);
+
+            String a = d.getAddress();
+            Map<Integer, String> messages = Storage.instance().getQueue(a);
+            if (!messages.isEmpty()) {
+              BluetoothSocket s = connect(a);
+              OutputStream out = s.getOutputStream();
+              InputStream in = s.getInputStream();
+
+              for (Map.Entry<Integer, String> entry : messages.entrySet()) {
+                Integer id = entry.getKey();
+                String m = entry.getValue();
+
+                Log.d("Syncer", a + ": " + m);
+
+                Util.writeMessage(out, m);
+                if (Util.readMessage(in).equals("DONE")) {
+                  Storage.instance().deleteQueue(id);
+                }
+              }
+
+              Util.writeMessage(out, "FINISH");
+              // Server closes the connection.
+            }
+          }
+        } catch (Throwable e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  });
 
   public Syncer() {
     super("Syncer");
+    t_.start();
   }
 
   @Override
   protected void onHandleIntent(Intent i) {
     String m = i.getStringExtra("message");
     if (m != null) {
-      Log.v("Syncer", "Message: " + m);
       all(m);
     }
   }
@@ -40,8 +86,13 @@ public class Syncer extends IntentService {
 
   private void all(String message) {
     for (BluetoothDevice d: paired_) {
-      sendMessage(d.getAddress(), message);
+      addQueue(d.getAddress(), message);
     }
+    l_.countDown();
+  }
+
+  private void addQueue(String address, String message) {
+    Storage.instance().insertQueue(address, message);
   }
 
   // This is horrible.
@@ -64,22 +115,5 @@ public class Syncer extends IntentService {
 
     s.connect();
     return s;
-  }
-
-  private void sendMessage(String address, String message) {
-    Log.v("Syncer", "Sending to " + address);
-    try {
-      synchronized (this) {
-        BluetoothSocket s = connect(address);
-        OutputStream out = s.getOutputStream();
-        InputStream in = s.getInputStream();
-
-        Util.writeMessage(out, message);
-        Log.v("Sync", Util.readMessage(in));
-        Util.writeMessage(out, "FINISH");
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 }

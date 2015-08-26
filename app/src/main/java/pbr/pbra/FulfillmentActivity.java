@@ -9,11 +9,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import pbr.pbra.logic.Storage;
 import pbr.pbra.model.Fulfillment;
+import pbr.pbra.sync.Syncer;
 
 public class FulfillmentActivity extends AppCompatActivity {
   private String id_;
@@ -56,6 +58,7 @@ public class FulfillmentActivity extends AppCompatActivity {
 
     if (!f_.equals(n)) { // Update is in order.
       Storage.updateFulfillment(id_, n);
+      Syncer.sendAll(this, new Gson().toJson(n));
     }
 
     finish();

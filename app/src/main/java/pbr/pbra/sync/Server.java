@@ -1,20 +1,12 @@
 package pbr.pbra.sync;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import org.droidparts.util.IOUtils;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -48,14 +40,8 @@ public class Server extends IntentService {
 
   public Server() {
     super("Server");
-    Log.v("Server", "Created");
-//    adapter_.cancelDiscovery();
-    if (adapter_.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE) {
-      Log.v("Server", "Disc");
-    }
+    Log.d("Server", "Created");
     try {
-//      server_ = adapter_
- //             .listenUsingInsecureRfcommWithServiceRecord("pbra", Syncer.uuid);
       Method m = adapter_.getClass().getMethod("listenUsingInsecureRfcommOn", new Class[]{int.class});
       server_ = (BluetoothServerSocket) m.invoke(adapter_, 1);
     }  catch (InvocationTargetException e) {
