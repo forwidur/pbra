@@ -152,7 +152,7 @@ public class MainActivity extends ListActivity
     if (scan != null) {
       String cont = scan.getContents();
       ((EditText) findViewById(R.id.search)).setText(cont);
-      issueSearch(cont);
+//      issueSearch(cont);
     }
   }
 }
