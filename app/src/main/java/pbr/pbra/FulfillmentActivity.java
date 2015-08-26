@@ -57,7 +57,7 @@ public class FulfillmentActivity extends AppCompatActivity {
     }
 
     if (!f_.equals(n)) { // Update is in order.
-      Storage.updateFulfillment(id_, n);
+      Storage.instance(this).updateFulfillment(id_, n);
       Syncer.sendAll(this, new Gson().toJson(n));
     }
 
