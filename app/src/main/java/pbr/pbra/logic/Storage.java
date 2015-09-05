@@ -59,6 +59,30 @@ public enum Storage {
         "email"       // The sort order
     );
   }
+
+  public static Cursor searchAss(String s) {
+    final String[] projection = {
+        "rowid _id",
+        "email",
+        "id",
+        "type",
+        "quantity",
+        "assignment"
+    };
+    final String where = "assignment LIKE ?";
+    String q = String.format("%%%s%%", s);
+    String[] whereArgs = new String[] { q };
+    return r_.query(
+        "fulfillment_export",  // The table to query
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        "email"       // The sort order
+    );
+  }
+
   public static Cursor orders(String s) {
     final String[] projection = {
         "rowid _id",

@@ -27,6 +27,7 @@
         </activity>
         <activity android:name=".OrdersActivity" />
         <activity android:name=".FulfillmentActivity" />
+        <activity android:name=".AssignmentActivity" />
         <activity android:name=".ConfigActivity" />
     </application>
 

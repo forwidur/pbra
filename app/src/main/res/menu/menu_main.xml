@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_sync" android:title="Sync"
+    <item android:id="@+id/action_ass" android:title="Lookup by assignment"
           android:orderInCategory="99" app:showAsAction="never" />
     <item android:id="@+id/action_scan" android:title="Scan QR code"
           android:orderInCategory="100" app:showAsAction="never" />

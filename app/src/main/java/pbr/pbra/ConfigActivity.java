@@ -52,6 +52,17 @@ public class ConfigActivity extends AppCompatActivity {
     }
   }
 
+  public void onFulImportClicked(View view) {
+    String file = Environment.getExternalStorageDirectory() +"/fulfillments.csv";
+
+    try {
+      showMessage("Import successful", String.format("Imported %d fulfillements.",
+          new CSVImporter(Storage.instance(this)).ProcessFul(file)));
+    } catch (Exception e) {
+      showMessage("Import failed", e.getMessage());
+    }
+  }
+
   public void onExportClicked(View view) {
     String file = Environment.getExternalStorageDirectory() +"/fulfillments.csv";
 

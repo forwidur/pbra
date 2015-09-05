@@ -7,13 +7,17 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 
 import pbr.pbra.model.Customer;
 import pbr.pbra.model.Order;
+import pbr.pbra.model.Fulfillment;
 
 public class CSVImporter {
   private final Storage s_;
+  static final SimpleDateFormat f_ = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   public CSVImporter(Storage s) {
     s_ = s;
@@ -51,7 +55,7 @@ public class CSVImporter {
     HashSet<String> seenCustomers = new HashSet<String>();
     HashSet<String> seenOrders = new HashSet<String>();
     int orderInc = 0;
-    for (CSVRecord r: records) {
+    for (CSVRecord r : records) {
       Customer c = makeCustomer(r);
       if (!seenCustomers.contains(c.email)) {
         s_.insertCustomer(c);
@@ -73,5 +77,44 @@ public class CSVImporter {
     }
 
     return orders;
+  }
+
+  private int getDate(String s) {
+    if (!s.isEmpty()) {
+      try {
+        return (int) (f_.parse(s).getTime() / 1000);
+      } catch (ParseException e) {
+        e.printStackTrace();
+        return 1;
+      }
+    }
+    return 0;
+  }
+
+  private Fulfillment makeFulfillment(CSVRecord r) {
+    Fulfillment res = new Fulfillment();
+
+    res.orderId = r.get("orderid");
+    res.assignment = r.get("assignment");
+    res.comment = r.get("comment");
+
+    res.complete = getDate(r.get("complete"));
+    res.returned = getDate(r.get("returned"));
+    res.version = getDate(r.get("last_updated"));
+
+    return res;
+  }
+
+  public int ProcessFul(String path) throws Exception {
+    Reader in = new FileReader(path);
+    Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(in);
+
+    int ful = 0;
+    for (CSVRecord r : records) {
+      Fulfillment f = makeFulfillment(r);
+      s_.updateFulfillment(r.get("orderid"), f);
+      ful++;
+    }
+    return ful;
   }
 }

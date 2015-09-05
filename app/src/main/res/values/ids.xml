@@ -6,4 +6,6 @@
     <item type="id" name="orderType" />
     <item type="id" name="orderId" />
     <item type="id" name="orderQuantity" />
+    <item type="id" name="assSearch" />
+    <item type="id" name="ass" />
 </resources>

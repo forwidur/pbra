@@ -133,6 +133,11 @@ public class MainActivity extends ListActivity
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
 
+    if (id == R.id.action_ass) {
+      startActivity(new Intent(this, AssignmentActivity.class));
+      return true;
+    }
+
     if (id == R.id.action_settings) {
       startActivity(new Intent(this, ConfigActivity.class));
       return true;
