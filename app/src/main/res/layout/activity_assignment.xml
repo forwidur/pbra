@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/assSearch"
-        android:hint="name, email or phone"
+        android:hint="tag number"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/label"
@@ -44,9 +44,5 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onSearchClicked"/><![CDATA[
-
-    >
-
-]]>
+        android:onClick="onSearchClicked"/>
 </RelativeLayout>
