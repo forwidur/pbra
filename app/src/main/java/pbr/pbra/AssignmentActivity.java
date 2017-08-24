@@ -45,7 +45,7 @@ public class AssignmentActivity extends ListActivity
     search.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
     // Search adapter.
-    String[] fromColumns = {"email", "assignment"};
+    String[] fromColumns = {"email", "bike_id"};
     int[] toViews = {R.id.email, R.id.ass};
     adapter_ = new SimpleCursorAdapter(this,
         R.layout.customer_ass_item, null,

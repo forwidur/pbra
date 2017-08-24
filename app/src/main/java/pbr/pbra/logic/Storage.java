@@ -70,19 +70,19 @@ public enum Storage {
         "id",
         "type",
         "quantity",
-        "assignment"
+        "bike_id"
     };
-    final String where = "assignment LIKE ?";
-    String q = String.format("%%%s%%", s);
+    final String where = "bike_id = ?";
+    String q = String.format("%s", s);
     String[] whereArgs = new String[]{q};
     return r_.query(
-        "fulfillment_export",  // The table to query
+        "assignments_export",  // The table to query
         projection,   // The columns to return
         where,        // The columns for the WHERE clause
         whereArgs,    // The values for the WHERE clause
         null,         // don't group the rows
         null,         // don't filter by row groups
-        "email"       // The sort order
+        "id"       // The sort order
     );
   }
 
@@ -377,6 +377,10 @@ public enum Storage {
       db.execSQL("CREATE VIEW fulfillment_export AS SELECT fulfillment.*, orders.* " +
           "FROM fulfillment, orders " +
           "WHERE fulfillment.order_id = orders.id");
+
+      db.execSQL("CREATE VIEW assignments_export AS SELECT assignments.bike_id, orders.* " +
+          "FROM assignments, orders " +
+          "WHERE assignments.order_id = orders.id");
 
       db.execSQL("CREATE TABLE queue (address STRING, message STRING)");
     }
