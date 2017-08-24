@@ -2,10 +2,13 @@ package pbr.pbra.sync;
 
 import android.app.Activity;
 import android.app.IntentService;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -13,32 +16,34 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import pbr.pbra.logic.Storage;
 
-public class Syncer extends IntentService {
+public class Syncer extends Service {
   final BluetoothAdapter adapter_ = BluetoothAdapter.getDefaultAdapter();
-  final Set<BluetoothDevice> paired_ = adapter_.getBondedDevices();
-  CountDownLatch l_ = new CountDownLatch(1);
+  Set<BluetoothDevice> paired_;
 
   final private Thread t_ = new Thread(new Runnable() {
     @Override
     public void run() {
       Log.d("Syncer", "Loop started");
+      for (BluetoothDevice d: paired_) {
+        Log.d("server", "Pushing to " + d.getName());
+      }
+
       while (true) {
         try {
           for (BluetoothDevice d: paired_) {
-            l_ = new CountDownLatch(1);
-            l_.await(60, TimeUnit.SECONDS);
-
             String a = d.getAddress();
             Map<Integer, String> messages = Storage.instance(Syncer.this).getQueue(a);
             if (!messages.isEmpty()) {
+              Log.d("Syncer", "Connecting to " + d.getName() + " " + d.getAddress());
               BluetoothSocket s = connect(a);
+              if (s == null) continue;
+
               OutputStream out = s.getOutputStream();
               InputStream in = s.getInputStream();
 
@@ -58,6 +63,8 @@ public class Syncer extends IntentService {
               // Server closes the connection.
             }
           }
+          // Stops the loop from spinning like crazy and creating garbage.
+          Thread.sleep(100);
         } catch (Throwable e) {
           e.printStackTrace();
         }
@@ -66,33 +73,25 @@ public class Syncer extends IntentService {
   });
 
   public Syncer() {
-    super("Syncer");
-    t_.start();
   }
 
   @Override
-  protected void onHandleIntent(Intent i) {
-    String m = i.getStringExtra("message");
-    if (m != null) {
-      all(m);
+  public void onCreate() {
+    paired_ = new HashSet<BluetoothDevice>();
+    for (BluetoothDevice d: adapter_.getBondedDevices()) {
+      if (d.getName().startsWith("pbr")) {
+        paired_.add(d);
+        Storage.instance(this).addPaired(d.getAddress());
+      }
     }
+
+    t_.start();
   }
 
-  public static void sendAll(Activity v, String message) {
-    Intent i = new Intent(v, Syncer.class);
-    i.putExtra("message", message);
-    v.startService(i);
-  }
-
-  private void all(String message) {
-    for (BluetoothDevice d: paired_) {
-      addQueue(d.getAddress(), message);
-    }
-    l_.countDown();
-  }
-
-  private void addQueue(String address, String message) {
-    Storage.instance(this).insertQueue(address, message);
+  @Nullable
+  @Override
+  public IBinder onBind(Intent intent) {
+    return null;
   }
 
   // This is horrible.
@@ -113,7 +112,12 @@ public class Syncer extends IntentService {
       adapter_.cancelDiscovery();
     }
 
-    s.connect();
+    try {
+      s.connect();
+    } catch (IOException e) {
+      Log.d("Syncer", "Connection failed to " + address);
+      return null;
+    }
     return s;
   }
 }

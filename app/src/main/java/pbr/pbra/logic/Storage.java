@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import pbr.pbra.model.Assignment;
 import pbr.pbra.model.Customer;
 import pbr.pbra.model.Fulfillment;
 import pbr.pbra.model.Order;
@@ -23,13 +24,15 @@ public enum Storage {
   private static SQLiteDatabase db_;
   private static SQLiteDatabase r_;
 
+  static final ArrayList<String> pairedDevices_ = new ArrayList<>();
+
   Storage() {
   }
 
   public static void init(Context c) {
     if (dbHelper_ == null) dbHelper_ = new OrdersDbHelper(c);
-    if (db_ == null)       db_ = dbHelper_.getWritableDatabase();
-    if (r_ == null)        r_ = dbHelper_.getReadableDatabase();
+    if (db_ == null) db_ = dbHelper_.getWritableDatabase();
+    if (r_ == null) r_ = dbHelper_.getReadableDatabase();
   }
 
   public static Storage instance(Context c) {
@@ -48,7 +51,7 @@ public enum Storage {
     };
     final String where = "email LIKE ? OR name LIKE ? OR name_search LIKE ? OR phone LIKE ?";
     String q = String.format("%%%s%%", s);
-    String[] whereArgs = new String[] { q, q, q, q };
+    String[] whereArgs = new String[]{q, q, q, q};
     return r_.query(
         "customers",  // The table to query
         projection,   // The columns to return
@@ -71,7 +74,7 @@ public enum Storage {
     };
     final String where = "assignment LIKE ?";
     String q = String.format("%%%s%%", s);
-    String[] whereArgs = new String[] { q };
+    String[] whereArgs = new String[]{q};
     return r_.query(
         "fulfillment_export",  // The table to query
         projection,   // The columns to return
@@ -91,7 +94,7 @@ public enum Storage {
         "quantity"
     };
     final String where = "email LIKE ?";
-    String[] whereArgs = new String[] { s };
+    String[] whereArgs = new String[]{s};
     return r_.query(
         "orders",  // The table to query
         projection,   // The columns to return
@@ -174,7 +177,7 @@ public enum Storage {
         "version"
     };
     final String where = "order_id LIKE ?";
-    String[] whereArgs = new String[] { id };
+    String[] whereArgs = new String[]{id};
     Cursor c = r_.query(
         "fulfillment",  // The table to query
         projection,   // The columns to return
@@ -226,7 +229,7 @@ public enum Storage {
   }
 
   public void deleteQueue(Integer id) {
-    db_.delete("queue", "rowid" +  "=" + id, null);
+    db_.delete("queue", "rowid" + "=" + id, null);
   }
 
   public Map<Integer, String> getQueue(String address) {
@@ -236,7 +239,7 @@ public enum Storage {
         "message"
     };
     final String where = "address LIKE ?";
-    String[] whereArgs = new String[] { address };
+    String[] whereArgs = new String[]{address};
     Cursor c = r_.query(
         "queue",      // The table to query
         projection,   // The columns to return
@@ -258,6 +261,95 @@ public enum Storage {
     return res;
   }
 
+  public Assignment getAssignment(String oid, int i) {
+    return getAssignment(Assignment.makeId(oid, i));
+  }
+
+  public Assignment getAssignment(String id) {
+    if (db_ == null) {
+      Log.e("Storage", "DB op but helper not initialized.");
+      return null;
+    }
+
+    if (id.isEmpty()) {
+      return null;
+    }
+
+    final String[] projection = {
+        "id",
+        "order_id",
+        "bike_id",
+        "returned",
+        "version"
+    };
+
+    final String where = "id LIKE ?";
+    String[] whereArgs = new String[] { id };
+    Cursor c = r_.query(
+        "assignments",  // The table to query
+        projection,   // The columns to return
+        where,        // The columns for the WHERE clause
+        whereArgs,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
+    );
+
+    if (c != null && c.getCount() != 0) {
+      c.moveToFirst();
+      Assignment res = new Assignment(id);
+
+      res.orderId = c.getString(c.getColumnIndexOrThrow("order_id"));
+      res.bikeId = c.getInt(c.getColumnIndexOrThrow("bike_id"));
+      res.returned = c.getInt(c.getColumnIndexOrThrow("returned"));
+      res.version = c.getInt(c.getColumnIndexOrThrow("version"));
+
+      return res;
+    }
+    return null;
+  }
+
+  // TODO: implement
+  public void updateAssignment(Assignment a) {
+    if (db_ == null) {
+      Log.e("Storage", "DB op but helper not initialized.");
+      return;
+    }
+
+    ContentValues v = new ContentValues();
+    v.put("id", a.id);
+    v.put("order_id", a.orderId);
+    v.put("bike_id", a.bikeId);
+    v.put("returned", a.returned);
+    v.put("version", a.version);
+
+    db_.insertWithOnConflict("assignments", null, v, SQLiteDatabase.CONFLICT_REPLACE);
+  }
+
+  public boolean updateAssignmentIfNewer(Assignment a) {
+    Assignment old = getAssignment(a.id);
+
+    Log.d("assold", String.valueOf(old));
+    Log.d("assnew", String.valueOf(a));
+
+    if (old == null || a.version > old.version) {
+      updateAssignment(a);
+      return true;
+    }
+    return false;
+  }
+
+  public void addPaired(String address) {
+    pairedDevices_.add(address);
+  }
+
+  public void queue(String message) {
+    for (String a: pairedDevices_) {
+      insertQueue(a, message);
+    }
+  }
+
+
   public static class OrdersDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "PBROrders.db";
@@ -278,6 +370,10 @@ public enum Storage {
           "(order_id TEXT PRIMARY KEY, assignment TEXT, comment TEXT, " +
           " complete INTEGER, returned INTEGER, version INTEGER)");
 
+      db.execSQL("CREATE TABLE assignments " +
+          "(id TEXT PRIMARY KEY, order_id TEXT," +
+          " bike_id INTEGER, returned INTEGER, version INTEGER)");
+
       db.execSQL("CREATE VIEW fulfillment_export AS SELECT fulfillment.*, orders.* " +
           "FROM fulfillment, orders " +
           "WHERE fulfillment.order_id = orders.id");
@@ -290,6 +386,7 @@ public enum Storage {
       db.execSQL("DROP TABLE IF EXISTS fulfillment");
       db.execSQL("DROP VIEW IF EXISTS fulfillment_export");
       db.execSQL("DROP TABLE IF EXISTS queue");
+      db.execSQL("DROP TABLE IF EXISTS assignmentes");
       onCreate(db);
     }
   }

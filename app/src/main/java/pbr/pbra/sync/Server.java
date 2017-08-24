@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import pbr.pbra.logic.Storage;
+import pbr.pbra.model.Assignment;
 import pbr.pbra.model.Fulfillment;
 
 public class Server extends IntentService {
@@ -38,8 +40,19 @@ public class Server extends IntentService {
 
               if (m.equals("FINISH")) break;
 
-              Fulfillment f = gson.fromJson(m, Fulfillment.class);
-              Storage.instance(Server.this).updateFulfillmentIfNewer(f);
+              try {
+                Log.d("Server", "Trying assignment: " + m);
+                Assignment a = gson.fromJson(m, Assignment.class);
+                if (a.id != null && !a.id.isEmpty()) {
+                  Storage.instance(Server.this).updateAssignmentIfNewer(a);
+                  Log.d("Server", "Parsed as assignment: " + m);
+                } else {
+                  Fulfillment f = gson.fromJson(m, Fulfillment.class);
+                  Storage.instance(Server.this).updateFulfillmentIfNewer(f);
+                }
+              } catch (JsonParseException ee){
+                Log.d("Server", "Not an recognized message: " + m);
+              }
 
               Util.writeMessage(out, "DONE");
             } while (!m.equals("FINISH"));
