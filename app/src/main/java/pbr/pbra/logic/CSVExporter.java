@@ -19,6 +19,37 @@ public class CSVExporter {
     return f_.format(new java.util.Date(((long)ts) * 1000));
   }
 
+  public static int exportAssignments(String path, Cursor c) throws IOException {
+    int cnt = 0;
+
+    final int orderId = c.getColumnIndexOrThrow("id");
+    final int email = c.getColumnIndexOrThrow("email");
+    final int assId = c.getColumnIndexOrThrow("bike_id");
+    final int returned = c.getColumnIndexOrThrow("returned");
+
+    final FileWriter f = new FileWriter(path);
+    final CSVPrinter p = new CSVPrinter(f, CSVFormat.EXCEL.withHeader(
+            "email", "orderid", "bikeid", "returned"));
+
+    if (c.moveToFirst()) {
+      do {
+        int r = c.getInt(returned);
+        p.printRecord(
+            c.getString(email),
+            c.getString(orderId),
+            c.getString(assId),
+            r == 0 ? "NORET" : dateConv(r)
+        );
+        cnt++;
+      } while(c.moveToNext());
+    }
+
+    p.close();
+    f.close();
+
+    return cnt;
+  }
+
   public static int exportFulfillments(String path, Cursor c) throws IOException {
     int cnt = 0;
 

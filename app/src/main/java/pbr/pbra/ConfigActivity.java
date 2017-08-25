@@ -11,6 +11,8 @@ import pbr.pbra.logic.CSVExporter;
 import pbr.pbra.logic.CSVImporter;
 import pbr.pbra.logic.Storage;
 
+import java.io.IOException;
+
 public class ConfigActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +70,19 @@ public class ConfigActivity extends AppCompatActivity {
 
     try {
       showMessage("Export successful", String.format("Exported %d records.",
-          CSVExporter.exportFulfillments(file, Storage.instance(this).allFulfillments())));
+              CSVExporter.exportFulfillments(file, Storage.instance(this).allFulfillments())));
     } catch (Exception e) {
+      showMessage("Export failed", e.getMessage());
+    }
+  }
+
+  public void onAssExportClicked(View view) {
+    String file = Environment.getExternalStorageDirectory() +"/assignments.csv";
+
+    try {
+      showMessage("Export successful", String.format("Exported %d records.",
+          CSVExporter.exportAssignments(file, Storage.instance(this).allAssignments())));
+    } catch (IOException e) {
       showMessage("Export failed", e.getMessage());
     }
   }

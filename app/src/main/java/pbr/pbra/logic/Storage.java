@@ -76,7 +76,7 @@ public enum Storage {
     String q = String.format("%s", s);
     String[] whereArgs = new String[]{q};
     return r_.query(
-        "assignments_export",  // The table to query
+        "assignments_orders",  // The table to query
         projection,   // The columns to return
         where,        // The columns for the WHERE clause
         whereArgs,    // The values for the WHERE clause
@@ -213,6 +213,10 @@ public enum Storage {
 
   public Cursor allFulfillments() {
     return r_.query("fulfillment_export", null, null, null, null, null, null);
+  }
+
+  public Cursor allAssignments() {
+    return r_.query("assignments_orders", null, null, null, null, null, null);
   }
 
   public void insertQueue(String address, String message) {
@@ -378,7 +382,8 @@ public enum Storage {
           "FROM fulfillment, orders " +
           "WHERE fulfillment.order_id = orders.id");
 
-      db.execSQL("CREATE VIEW assignments_export AS SELECT assignments.bike_id, orders.* " +
+      db.execSQL("CREATE VIEW assignments_orders AS SELECT " +
+          "assignments.bike_id, assignments.returned, orders.* " +
           "FROM assignments, orders " +
           "WHERE assignments.order_id = orders.id");
 
