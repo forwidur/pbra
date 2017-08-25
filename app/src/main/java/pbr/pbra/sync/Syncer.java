@@ -64,7 +64,7 @@ public class Syncer extends Service {
             }
           }
           // Stops the loop from spinning like crazy and creating garbage.
-          Thread.sleep(100);
+          Thread.sleep(5000);
         } catch (Throwable e) {
           e.printStackTrace();
         }
