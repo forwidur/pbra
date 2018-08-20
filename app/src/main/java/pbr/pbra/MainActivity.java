@@ -3,6 +3,7 @@ package pbr.pbra;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -124,9 +126,19 @@ public class MainActivity extends ListActivity
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-//    menu.add("0 waiting for sync");
+    //  menu.add("0 waiting for sync");
     getMenuInflater().inflate(R.menu.menu_main, menu);
+
     return true;
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    // Hides the keyboard.
+    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
@@ -143,6 +155,10 @@ public class MainActivity extends ListActivity
       return true;
     }
 
+    if (id == R.id.action_scanner) {
+      startActivity(new Intent(this, ScannerActivity.class));
+      return true;
+    }
     if (id == R.id.action_scan) {
       new IntentIntegrator(this).initiateScan();
       return true;
