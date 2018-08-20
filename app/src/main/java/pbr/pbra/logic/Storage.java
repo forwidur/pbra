@@ -70,7 +70,8 @@ public enum Storage {
         "id",
         "type",
         "quantity",
-        "bike_id"
+        "bike_id",
+        "assid"
     };
     final String where = "bike_id = ?";
     String q = String.format("%s", s);
@@ -310,6 +311,17 @@ public enum Storage {
 
       return res;
     }
+    Log.d("ass", "Not found");
+    return null;
+  }
+
+  public Assignment getAssignmentByBikeId(String id) {
+    Cursor c = searchAss(id);
+    if (c != null && c.getCount() != 0) {
+      c.moveToFirst();
+      String assId = c.getString(c.getColumnIndexOrThrow("assid"));
+      return getAssignment(assId);
+    }
     return null;
   }
 
@@ -383,7 +395,7 @@ public enum Storage {
           "WHERE fulfillment.order_id = orders.id");
 
       db.execSQL("CREATE VIEW assignments_orders AS SELECT " +
-          "assignments.bike_id, assignments.returned, orders.* " +
+          "assignments.bike_id, assignments.returned, assignments.id AS assid, orders.* " +
           "FROM assignments, orders " +
           "WHERE assignments.order_id = orders.id");
 
