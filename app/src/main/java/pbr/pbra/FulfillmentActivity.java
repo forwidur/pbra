@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,16 +21,17 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
+import pbr.pbra.logic.Barcode;
 import pbr.pbra.logic.Storage;
 import pbr.pbra.model.Assignment;
 import pbr.pbra.model.Fulfillment;
-import pbr.pbra.sync.Syncer;
 
 public class FulfillmentActivity extends AppCompatActivity {
   private String id_;
   private Fulfillment f_;
   private int quantity_ = 0;
   private ArrayList<AssUpdater> ups_ = new ArrayList<>();
+  private EditText scanTargetEdit;
 
   @Override
   protected void onCreate(Bundle state) {
@@ -112,9 +114,19 @@ public class FulfillmentActivity extends AppCompatActivity {
     }
   }
 
+  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    IntentResult sr = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+    if (sr == null) return;
+
+    String c = Barcode.strip(sr.getContents());
+    Log.d("code", c);
+
+    scanTargetEdit.setText(c);
+  }
+
   private AssUpdater addAss(LinearLayout r, String oid, int i) {
     LinearLayout l = new LinearLayout(this);
-    EditText e = new EditText(this);
+    final EditText e = new EditText(this);
     e.setWidth(200);
     e.setInputType(InputType.TYPE_CLASS_NUMBER);
     l.addView(e);
@@ -125,6 +137,19 @@ public class FulfillmentActivity extends AppCompatActivity {
     }
     String val = a.bikeId == 0 ? "" : Integer.toString(a.bikeId);
     e.setText(val);
+
+    Button scan = new Button(this);
+    scan.setText("Scan");
+    final Activity act = this;
+    scan.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        IntentIntegrator i = new IntentIntegrator(act);
+        scanTargetEdit = e;
+        i.initiateScan();
+      }
+    });
+    l.addView(scan);
 
     CheckBox c = new CheckBox(this);
     l.addView(c);
@@ -183,18 +208,5 @@ public class FulfillmentActivity extends AppCompatActivity {
 
   public void onCancelClicked(View view) {
     finish();
-  }
-
-  public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-    IntentResult scan =
-        IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-    if (scan != null) {
-      String cont = scan.getContents();
-//      ((EditText) findViewById(R.id.fulAssignment)).setText(cont);
-    }
-  }
-
-  public void onScanClicked(View view) {
-    new IntentIntegrator(this).initiateScan();
   }
 }
