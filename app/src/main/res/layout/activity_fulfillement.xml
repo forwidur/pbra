@@ -9,7 +9,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Order Type"
         android:id="@+id/orderType"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -107,26 +107,30 @@
         android:layout_alignEnd="@+id/orderId"/>
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="30dp"
+        android:onClick="onSaveClicked"
         android:text="Save"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/quantityLabel"
-        android:layout_toEndOf="@+id/quantityLabel"
-        android:onClick="onSaveClicked"/>
+        android:layout_marginLeft="30dp"
+        android:layout_alignParentLeft="true"/>
 
     <Button
+        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="30dp"
+        android:onClick="onCancelClicked"
         android:text="Cancel"
-        android:id="@+id/button2"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/orderId"
-        android:layout_toStartOf="@+id/orderId"
-        android:onClick="onCancelClicked"/>
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"/>
 
-    <CheckBox
+    <!--CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Complete"
@@ -134,7 +138,7 @@
         android:checked="false"
         android:layout_below="@+id/fulComment"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"/-->
 
     <!--CheckBox
         android:layout_width="wrap_content"

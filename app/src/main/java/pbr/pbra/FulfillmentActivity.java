@@ -52,7 +52,7 @@ public class FulfillmentActivity extends AppCompatActivity {
     if (f_ != null) {
 //      ((EditText) findViewById(R.id.fulAssignment)).setText(f_.assignment);
       ((EditText) findViewById(R.id.fulComment)).setText(f_.comment);
-      ((CheckBox) findViewById(R.id.fulComplete)).setChecked(f_.complete != 0);
+//      ((CheckBox) findViewById(R.id.fulComplete)).setChecked(f_.complete != 0);
 //      ((CheckBox) findViewById(R.id.fulReturned)).setChecked(f_.returned != 0);
     } else {
       f_ = new Fulfillment();
@@ -159,9 +159,9 @@ public class FulfillmentActivity extends AppCompatActivity {
     n.comment = ((EditText) findViewById(R.id.fulComment)).getText().toString();
     int ts = (int) (System.currentTimeMillis()/1000);
     n.version = ts;
-    if (((CheckBox) findViewById(R.id.fulComplete)).isChecked()) {
-      n.complete = f_.complete != 0 ? f_.complete : ts;
-    }
+//    if (((CheckBox) findViewById(R.id.fulComplete)).isChecked()) {
+//      n.complete = f_.complete != 0 ? f_.complete : ts;
+//    }
 //    if (((CheckBox) findViewById(R.id.fulReturned)).isChecked()) {
 //      n.returned = f_.returned != 0 ? f_.returned : ts;
 //  }
