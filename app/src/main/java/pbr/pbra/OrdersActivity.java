@@ -6,16 +6,12 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import pbr.pbra.logic.OrderLoader;
-import pbr.pbra.logic.Storage;
 
 public class OrdersActivity extends ListActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
