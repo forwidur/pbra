@@ -3,34 +3,55 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Run Import"
         android:id="@+id/button3"
-        android:onClick="onImportClicked"
-        android:layout_marginTop="52dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_marginTop="17dp"
+        android:onClick="onImportClicked"
+        android:text="Run Import"
+        android:layout_alignParentLeft="true"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Run Export"
         android:id="@+id/button4"
-        android:onClick="onExportClicked"
-        android:layout_alignTop="@+id/button3"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Run Fulfillment Import"
-        android:id="@+id/button6"
-        android:layout_below="@+id/button4"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="55dp"
-        android:onClick="onFulImportClicked"/>
+        android:layout_alignTop="@+id/button3"
+        android:onClick="onExportClicked"
+        android:text="Run Export"
+        android:layout_alignParentRight="true"/>
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="138dp"
+        android:onClick="onAssExportClicked"
+        android:text="Export assignments"
+        android:layout_alignParentLeft="true"/>
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:onClick="onUploadClicked"
+        android:text="Upload assignments"
+        android:layout_alignParentLeft="true"/>
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="79dp"
+        android:onClick="onFulImportClicked"
+        android:text="Run Fulfillment Import"
+        android:layout_alignParentLeft="true"/>
 </RelativeLayout>

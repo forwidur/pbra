@@ -5,13 +5,19 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import pbr.pbra.logic.CSVExporter;
 import pbr.pbra.logic.CSVImporter;
 import pbr.pbra.logic.Storage;
+import pbr.pbra.model.Assignment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ConfigActivity extends AppCompatActivity {
   @Override
@@ -85,5 +91,24 @@ public class ConfigActivity extends AppCompatActivity {
     } catch (IOException e) {
       showMessage("Export failed", e.getMessage());
     }
+  }
+
+  private String makeFirebaseId(String s) {
+    return s.replaceFirst("#", "");
+  }
+
+  public void onUploadClicked(View view) {
+    ArrayList<Assignment> asses = Storage.instance(this).getAllAssignments();
+
+    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+
+    int cnt = 0;
+    for (Assignment a: asses) {
+      db.child("assignments").child(makeFirebaseId(a.id)).setValue(a);
+      Log.d("uploader", "Saving " + a.id);
+      cnt++;
+    }
+
+    showMessage("Upload successful", String.format("Uploaded %d assignments.", cnt));
   }
 }

@@ -7,6 +7,9 @@ public class Assignment {
   public int returned = 0;
   public int version;
 
+  // Needed by Firebase.
+  public Assignment() {}
+
   public Assignment(String id) {
     this.id = id;
     this.version = (int) (System.currentTimeMillis()/1000);

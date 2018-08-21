@@ -315,6 +315,40 @@ public enum Storage {
     return null;
   }
 
+  public ArrayList<Assignment> getAllAssignments() {
+    if (db_ == null) {
+      Log.e("Storage", "DB op but helper not initialized.");
+      return null;
+    }
+
+    ArrayList<Assignment> res = new ArrayList<>();
+
+    Cursor c = r_.query(
+        "assignments",  // The table to query
+        null,   // The columns to return
+        null,        // The columns for the WHERE clause
+        null,    // The values for the WHERE clause
+        null,         // don't group the rows
+        null,         // don't filter by row groups
+        null          // The sort order
+    );
+
+    if (c != null && c.getCount() != 0) {
+      c.moveToFirst();
+      do {
+        Assignment a = new Assignment(c.getString(c.getColumnIndexOrThrow("id")));
+
+        a.orderId = c.getString(c.getColumnIndexOrThrow("order_id"));
+        a.bikeId = c.getInt(c.getColumnIndexOrThrow("bike_id"));
+        a.returned = c.getInt(c.getColumnIndexOrThrow("returned"));
+        a.version = c.getInt(c.getColumnIndexOrThrow("version"));
+        res.add(a);
+      } while (c.moveToNext());
+    }
+
+    return res;
+  }
+
   public Assignment getAssignmentByBikeId(String id) {
     Cursor c = searchAss(id);
     if (c != null && c.getCount() != 0) {
