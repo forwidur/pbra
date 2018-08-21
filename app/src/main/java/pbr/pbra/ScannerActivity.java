@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -36,6 +37,8 @@ public class ScannerActivity extends AppCompatActivity {
     scanCode = (TextView)findViewById(R.id.code);
     orderId = (TextView)findViewById(R.id.scanOrderId);
     status = (TextView)findViewById(R.id.scanStatus);
+    // Allows collecting kbd input even if the screen is locked.
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
   }
 
   public void showMessage(String title, String message) {
